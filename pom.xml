@@ -4,7 +4,7 @@
 	<artifactId>openapi-dart-generator</artifactId>
 	<packaging>jar</packaging>
 	<name>openapi-dart-generator</name>
-	<version>3.7-SNAPSHOT</version>
+	<version>4.1-SNAPSHOT</version>
 
 	<description>
 		dart2 generator from openapi 3.x spec files. Changing to openapitools dependencies.
@@ -34,7 +34,7 @@
 	</scm>
 
 	<properties>
-		<openapi-codegen-version>4.2.2</openapi-codegen-version>
+		<openapi-codegen-version>5.0.0-SNAPSHOT</openapi-codegen-version>
 	</properties>
 
 	<prerequisites>
@@ -60,6 +60,12 @@
 			<version>${openapi-codegen-version}</version>
 			<scope>provided</scope>
 		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13</version>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
