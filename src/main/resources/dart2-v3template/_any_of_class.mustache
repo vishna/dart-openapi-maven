@@ -1,0 +1,70 @@
+class {{classname}} {
+  {{classname}}();
+
+  dynamic _value;
+  dynamic get value => _value;
+
+  @override
+  String toString() {
+    return 'AnyOf<{{anyOfTemplate}}>[value=$_value]';
+  }
+
+  fromJson(Map<String, dynamic> json) {
+    if (json == null) return;
+
+    final discriminator = json[r'{{discriminatorProperty}}'];
+
+    if (discriminator == null) {
+      return;
+    }
+
+    switch (discriminator) {
+      {{#innerTypes}}
+      case r'{{discriminatorValue}}':
+        _value = {{classname}}.fromJson(json);
+        break;
+      {{/innerTypes}}
+    }
+  }
+
+  {{classname}}.fromJson(Map<String, dynamic> json) {
+    fromJson(json); // allows child classes to call
+  }
+
+  Map<String, dynamic> toJson() => LocalApiClient.serialize(_value);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    if (other is {{classname}} && runtimeType == other.runtimeType) {
+      return _value == other._value;
+    }
+
+    return false;
+  }
+
+  @override
+  int get hashCode {
+    var hashCode = runtimeType.hashCode;
+
+    if (_value != null) {
+      hashCode = hashCode * 31 + _value.hashCode;
+    }
+
+    return hashCode;
+  }
+
+  {{classname}} copyWith() {
+    final copy = {{classname}}();
+    copy._value = _value?.copyWith();
+    return copy;
+  }
+
+  static List<{{classname}}> listFromJson(List<dynamic> json) {
+    return json == null ? <{{classname}}>[] : json.map((value) => AnyOfMyAppleMyBanana.fromJson(value)).toList();
+  }
+}
+
