@@ -80,6 +80,7 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
 
     this.additionalProperties.put("x-internal-enums", extraInternalEnumProperties);
     this.additionalProperties.put("x-dart-anyparts", extraAnyParts);
+    this.additionalProperties.put("nullSafe", true);
   }
 
   /**
@@ -467,6 +468,7 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
       data.put("classname", className);
       data.put("discriminatorProperty", discriminatorProperty.getPropertyName());
       data.put("innerTypes", innerTypes);
+      data.put("nullSafe", generator.additionalProperties.get("nullSafe"));
 
       composedSchema.getAnyOf().stream().forEach(schema -> {
         String ref = schema.get$ref();

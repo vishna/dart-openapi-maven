@@ -1,15 +1,15 @@
 class {{classname}} {
   {{classname}}();
 
-  dynamic _value;
-  dynamic get value => _value;
+  dynamic{{#nullSafe}}?{{/nullSafe}} _value;
+  dynamic get value => _value{{#nullSafe}}!{{/nullSafe}};
 
   @override
   String toString() {
     return 'AnyOf<{{anyOfTemplate}}>[value=$_value]';
   }
 
-  fromJson(Map<String, dynamic> json) {
+  fromJson(Map<String, dynamic>{{#nullSafe}}?{{/nullSafe}} json) {
     if (json == null) return;
 
     final discriminator = json[r'{{discriminatorProperty}}'];
@@ -27,14 +27,14 @@ class {{classname}} {
     }
   }
 
-  {{classname}}.fromJson(Map<String, dynamic> json) {
+  {{classname}}.fromJson(Map<String, dynamic>{{#nullSafe}}?{{/nullSafe}} json) {
     fromJson(json); // allows child classes to call
   }
 
   Map<String, dynamic> toJson() => LocalApiClient.serialize(_value);
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(Object{{#nullSafe}}?{{/nullSafe}} other) {
     if (identical(this, other)) {
       return true;
     }
@@ -63,7 +63,7 @@ class {{classname}} {
     return copy;
   }
 
-  static List<{{classname}}> listFromJson(List<dynamic> json) {
+  static List<{{classname}}> listFromJson(List<dynamic>{{#nullSafe}}?{{/nullSafe}} json) {
     return json == null ? <{{classname}}>[] : json.map((value) => {{classname}}.fromJson(value)).toList();
   }
 }

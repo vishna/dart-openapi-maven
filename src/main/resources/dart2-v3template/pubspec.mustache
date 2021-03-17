@@ -1,6 +1,7 @@
 name: {{pubName}}
 version: {{pubVersion}}
 description: {{pubDescription}}
+publish_to: none
 {{#pubRepository}}
 repository: {{{.}}}
 {{/pubRepository}}
@@ -18,7 +19,9 @@ dependencies:
 {{#nullSafe}}
   dio: '4.0.0-beta5'
   openapi_dart_common:
-    path: '/Users/richard/projects/dart/openapi_dart_common'
+    git:
+      url: git@github.com:dart-ogurets/openapi_dart_common.git
+      ref: mods-for-nullsafe
   collection: '^1.15.0'
 {{/nullSafe}}
 {{^nullSafe}}
