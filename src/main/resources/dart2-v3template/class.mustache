@@ -213,7 +213,7 @@ class {{classname}}{{#parent}} extends {{parent}}{{/parent}} {
             static {{{enumName}}}{{#nullSafe}}?{{/nullSafe}} fromJson(String key) => key == null ? null : fromMap[key];
 
             static List<{{{enumName}}}> listFromJson(List<dynamic>{{#nullSafe}}?{{/nullSafe}} json) =>
-              json == null ? <{{{enumName}}}>[] : json.map((value) => fromJson(value)).toList();
+              json == null ? <{{{enumName}}}>[] : json.map((value) => fromJson(value){{#nullSafe}}!{{/nullSafe}}).toList();
 
             static {{{enumName}}} copyWith({{{enumName}}} instance) => instance;
           }
