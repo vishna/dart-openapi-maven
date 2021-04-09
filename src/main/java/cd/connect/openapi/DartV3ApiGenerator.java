@@ -33,10 +33,12 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
 	private static final String LIBRARY_NAME = "dart2-api";
 	private static final String DART2_TEMPLATE_FOLDER = "dart2-v3template";
   private static final String ARRAYS_WITH_DEFAULT_VALUES_ARE_NULLSAFE = "nullSafe-array-default";
+  private static final String LIST_ANY_OF = "listAnyOf";
   protected boolean arraysThatHaveADefaultAreNullSafe;
 
   Map<String, AnyOfClass> extraAnyOfClasses = new HashMap<String, AnyOfClass>();
   Set<String> extraAnyParts = new HashSet<String>();
+  boolean listAnyOf = false;
 
   public DartV3ApiGenerator() {
 		super();
@@ -85,6 +87,7 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
 
     arraysThatHaveADefaultAreNullSafe =
       additionalProperties.containsKey(ARRAYS_WITH_DEFAULT_VALUES_ARE_NULLSAFE);
+    listAnyOf = additionalProperties.containsKey(LIST_ANY_OF);
   }
 
   /**
@@ -236,10 +239,12 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
   public Map<String, Object> updateAllModels(Map<String, Object> objs) {
     super.updateAllModels(objs);
 
-    // add models for List<AnyOf<*>> classes
-    extraAnyOfClasses.values().forEach(anyOfClass -> {
-      objs.put(anyOfClass.fileName, anyOfClass.toModelMap(this));
-    });
+    if (listAnyOf) {
+      // add models for List<AnyOf<*>> classes
+      extraAnyOfClasses.values().forEach(anyOfClass -> {
+        objs.put(anyOfClass.fileName, anyOfClass.toModelMap(this));
+      });
+    }
 
     Map<String, CodegenModel> allModels = new HashMap<>();
 
@@ -457,21 +462,23 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
 
   @Override
   public String toAnyOfName(List<String> names, ComposedSchema composedSchema) {
-    // create models for List<anyOf> classes that have discriminator
-    if (composedSchema.getDiscriminator() != null) {
-      // ensure alphabetical sorting
-      names = new ArrayList<String>(names);
-      Collections.sort(names);
-      List<String> namesFilename = names.stream().map(this::toModelFilename).collect(Collectors.toList());
-      List<String> namesCapitalized = names.stream().map(StringUtils::capitalize).collect(Collectors.toList());
-      String className = "AnyOf" + String.join("", namesCapitalized);
-      String enumClassName = "AnyOfDiscriminator" + String.join("", namesCapitalized);
-      String fileName = "any_of_" + String.join("_", namesFilename);
-      String filePart = "model/" + fileName + ".dart";
-      // collect any of classes
-      extraAnyOfClasses.put(className, new AnyOfClass(fileName, filePart, toModelName(className), toModelName(enumClassName), composedSchema));
-      extraAnyParts.add(filePart);
-      return className;
+    if (listAnyOf) {
+      // create models for List<anyOf> classes that have discriminator
+      if (composedSchema.getDiscriminator() != null) {
+        // ensure alphabetical sorting
+        names = new ArrayList<String>(names);
+        Collections.sort(names);
+        List<String> namesFilename = names.stream().map(this::toModelFilename).collect(Collectors.toList());
+        List<String> namesCapitalized = names.stream().map(StringUtils::capitalize).collect(Collectors.toList());
+        String className = "AnyOf" + String.join("", namesCapitalized);
+        String enumClassName = "AnyOfDiscriminator" + String.join("", namesCapitalized);
+        String fileName = "any_of_" + String.join("_", namesFilename);
+        String filePart = "model/" + fileName + ".dart";
+        // collect any of classes
+        extraAnyOfClasses.put(className, new AnyOfClass(fileName, filePart, toModelName(className), toModelName(enumClassName), composedSchema));
+        extraAnyParts.add(filePart);
+        return className;
+      }
     }
     return super.toAnyOfName(names, composedSchema);
   }
