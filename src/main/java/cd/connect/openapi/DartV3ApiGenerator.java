@@ -465,10 +465,11 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
       List<String> namesFilename = names.stream().map(this::toModelFilename).collect(Collectors.toList());
       List<String> namesCapitalized = names.stream().map(StringUtils::capitalize).collect(Collectors.toList());
       String className = "AnyOf" + String.join("", namesCapitalized);
+      String enumClassName = "AnyOfDiscriminator" + String.join("", namesCapitalized);
       String fileName = "any_of_" + String.join("_", namesFilename);
       String filePart = "model/" + fileName + ".dart";
       // collect any of classes
-      extraAnyOfClasses.put(className, new AnyOfClass(fileName, filePart, toModelName(className), composedSchema));
+      extraAnyOfClasses.put(className, new AnyOfClass(fileName, filePart, toModelName(className), toModelName(enumClassName), composedSchema));
       extraAnyParts.add(filePart);
       return className;
     }
@@ -479,13 +480,15 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
     final String fileName;
     final String filePart;
     final String className;
+    final String enumClassName;
     final ComposedSchema composedSchema;
     final Discriminator discriminatorProperty;
 
-    AnyOfClass(String fileName, String filePart, String className, ComposedSchema composedSchema) {
+    AnyOfClass(String fileName, String filePart, String className, String enumClassName, ComposedSchema composedSchema) {
       this.fileName = fileName;
       this.filePart = filePart;
       this.className = className;
+      this.enumClassName = enumClassName;
       this.composedSchema = composedSchema;
       discriminatorProperty = composedSchema.getDiscriminator();
       assert (discriminatorProperty != null);
@@ -498,6 +501,7 @@ public class DartV3ApiGenerator extends DartClientCodegen implements CodegenConf
       data.put("pubName", generator.pubName);
       data.put("isAnyOfClass", true);
       data.put("classname", className);
+      data.put("enumClassname", enumClassName);
       data.put("discriminatorProperty", discriminatorProperty.getPropertyName());
       data.put("innerTypes", innerTypes);
       data.put("nullSafe", generator.additionalProperties.get("nullSafe"));

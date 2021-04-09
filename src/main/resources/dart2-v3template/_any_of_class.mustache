@@ -66,5 +66,20 @@ class {{classname}} {
   static List<{{classname}}> listFromJson(List<dynamic>{{#nullSafe}}?{{/nullSafe}} json) {
     return json == null ? <{{classname}}>[] : json.map((value) => {{classname}}.fromJson(value)).toList();
   }
+
+  {{#innerTypes}}{{classname}} as{{classname}}() => _value as {{classname}};
+  {{/innerTypes}}
+
+  dynamic as({{enumClassname}} type) {
+    switch (type) {
+      {{#innerTypes}}
+      case {{enumClassname}}.{{classname}}:
+        return _value as {{classname}};
+      {{/innerTypes}}
+    }
+  }
 }
 
+enum {{enumClassname}} {
+  {{#innerTypes}}{{classname}},{{/innerTypes}}
+}
